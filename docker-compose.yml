@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  backend:
+    driver: overlay
+
+services:
+  scrapyd:
+    build: .
+    image: pm2-onbuild
+    restart: on-failure
+    ports:
+      - "127.0.0.1:9229:9229"
+    environment:
+      - NODE_ENV=development
+    working_dir: /home/node/app
+    volumes:
+      - ./app:/home/node/app
+      - ./log/app:/root/.pm2/logs
+    command: /bin/sh -c "npm install --production && pm2-runtime start pm2.json"
+    networks:
+      - backend
